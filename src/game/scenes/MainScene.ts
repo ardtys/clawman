@@ -2743,7 +2743,7 @@ export default class MainScene extends Phaser.Scene {
 
   public setScreenShakeEnabled(enabled: boolean) {
     // Store preference - will be checked before shaking
-    this.cameras.main.setShake(0, 0); // Reset any current shake
+    this.cameras.main.shake(0); // Reset any current shake
   }
 
   public setGameMode(mode: GameMode) {
