@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(del \"C:\\\\Users\\\\Daffa\\\\OneDrive\\\\Desktop\\\\CLAWMAN\\\\nul\")",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(npm init -y)",
+      "Bash(npm install:*)",
+      "Bash(npx next build)",
+      "Bash(npx next dev)",
+      "Bash(timeout:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(curl:*)",
+      "Bash(npx next dev:*)",
+      "Bash(ping:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill //F //PID 41852)",
+      "Bash(npm ls:*)",
+      "Bash(taskkill:*)",
+      "Bash(findstr:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(if exist .git rmdir /s /q .git)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial release: CLAW-MAN retro arcade shrimp harvester\n\n- Pac-Man style game with Phaser.js \\(maze generation, shrimp collection, ghost AI\\)\n- OG Pac-Man ghost personalities \\(Blinky, Pinky, Inky, Clyde\\) with scatter/chase/frightened modes\n- Golden shrimp power pellet mechanic \\(ghosts turn blue, edible for 200/400/800/1600 pts\\)\n- CRT retro arcade UI with scanlines, neon glow effects, and flicker animation\n- Live feed, leaderboard, AI commentary, stats panel, shrimp rain feature\n- Mobile support with virtual D-pad touch controls\n- Responsive layout for all screen sizes\n- Ready for Vercel deployment\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(rm:*)",
+      "Bash(npm run dev)",
+      "Bash(npm run build:*)"
+    ]
+  }
+}
