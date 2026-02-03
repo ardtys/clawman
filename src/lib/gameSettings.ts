@@ -90,7 +90,7 @@ export function saveSettings(settings: GameSettings, walletAddress?: string): vo
     const key = walletAddress ? `${STORAGE_KEY}-${walletAddress}` : STORAGE_KEY;
     localStorage.setItem(key, JSON.stringify(settings));
   } catch {
-    // Ignore errors
+    
   }
 }
 
@@ -105,7 +105,7 @@ export function updateSetting<K extends keyof GameSettings>(
   return updated;
 }
 
-// Colorblind filter matrices for CSS
+
 export const COLORBLIND_FILTERS: Record<string, string> = {
   none: "none",
   protanopia: "url(#protanopia)",

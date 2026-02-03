@@ -14,12 +14,21 @@ import {
   Wifi,
   Activity,
   ChevronRight,
+  ChevronDown,
   ShieldAlert,
   Layers,
   Zap,
   Gamepad2,
   Target,
   Sparkles,
+  Clock,
+  Users,
+  Trophy,
+  Volume2,
+  Eye,
+  Crosshair,
+  Menu,
+  X,
 } from "lucide-react";
 
 // ============================================================
@@ -282,11 +291,11 @@ function MoltbookFeed() {
       const entry = LOG_POOL[Math.floor(Math.random() * LOG_POOL.length)];
       const now = new Date();
       const time = now.toLocaleTimeString("en-US", { hour12: false });
-      idRef.current++;
+      const newId = ++idRef.current;
       setLogs((prev) => {
         const next = [
           ...prev,
-          { id: idRef.current, time, prefix: entry.prefix, msg: entry.msg, color: entry.color },
+          { id: newId, time, prefix: entry.prefix, msg: entry.msg, color: entry.color },
         ];
         if (next.length > 30) return next.slice(-30);
         return next;
@@ -294,21 +303,23 @@ function MoltbookFeed() {
       const delay = 1200 + Math.random() * 2500;
       setTimeout(addLog, delay);
     };
+
+    // Initialize logs in a single state update to avoid duplicate keys
+    const initialLogs: LogLine[] = [];
+    const now = new Date();
     for (let i = 0; i < 5; i++) {
       const entry = LOG_POOL[i];
-      const now = new Date();
-      idRef.current++;
-      setLogs((prev) => [
-        ...prev,
-        {
-          id: idRef.current,
-          time: now.toLocaleTimeString("en-US", { hour12: false }),
-          prefix: entry.prefix,
-          msg: entry.msg,
-          color: entry.color,
-        },
-      ]);
+      const newId = ++idRef.current;
+      initialLogs.push({
+        id: newId,
+        time: now.toLocaleTimeString("en-US", { hour12: false }),
+        prefix: entry.prefix,
+        msg: entry.msg,
+        color: entry.color,
+      });
     }
+    setLogs(initialLogs);
+
     const t = setTimeout(addLog, 1500);
     return () => { cancelled = true; clearTimeout(t); };
   }, []);
@@ -321,19 +332,19 @@ function MoltbookFeed() {
 
   return (
     <div className="relative h-full flex flex-col border border-[#00ffff]/20 rounded-lg bg-[#050508] overflow-hidden">
-      <div className="px-4 py-2.5 border-b border-[#00ffff]/15 flex items-center gap-2 shrink-0">
+      <div className="px-4 py-3 border-b border-[#00ffff]/15 flex items-center gap-2 shrink-0">
         <div className="w-2 h-2 rounded-full bg-[#00ffff] animate-pulse" />
         <span
-          className="text-[9px] md:text-[10px] tracking-widest text-[#00ffff]"
+          className="text-[10px] md:text-[11px] tracking-widest text-[#00ffff]"
           style={{ fontFamily: '"Press Start 2P"' }}
         >
           LIVE MOLTBOOK FEED
         </span>
-        <Activity size={12} className="text-[#00ffff]/50 ml-auto" />
+        <Activity size={14} className="text-[#00ffff]/50 ml-auto" />
       </div>
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-3 space-y-1 min-h-0"
+        className="flex-1 overflow-y-auto p-3 space-y-1.5 min-h-0"
         style={{ fontFamily: '"Fira Code", monospace' }}
       >
         <AnimatePresence initial={false}>
@@ -343,21 +354,21 @@ function MoltbookFeed() {
               initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.25 }}
-              className="text-[11px] md:text-[12px] leading-relaxed"
+              className="text-[12px] md:text-[13px] leading-relaxed"
             >
-              <span className="text-[#333]">{log.time}</span>{" "}
+              <span className="text-[#444]">{log.time}</span>{" "}
               <span style={{ color: log.color }}>{log.prefix}</span>{" "}
               <span className="text-[#888]">{log.msg}</span>
             </motion.div>
           ))}
         </AnimatePresence>
-        <div className="text-[12px] text-[#00ffff] terminal-cursor" />
+        <div className="text-[13px] text-[#00ffff] terminal-cursor" />
       </div>
-      <div className="px-4 py-2 border-t border-[#00ffff]/15 flex justify-between shrink-0">
-        <span className="text-[10px] text-[#444]" style={{ fontFamily: '"Fira Code"' }}>
+      <div className="px-4 py-2.5 border-t border-[#00ffff]/15 flex justify-between shrink-0">
+        <span className="text-[11px] text-[#555]" style={{ fontFamily: '"Fira Code"' }}>
           {logs.length} entries
         </span>
-        <span className="text-[10px] text-[#00ffff] animate-pulse" style={{ fontFamily: '"Fira Code"' }}>
+        <span className="text-[11px] text-[#00ffff] animate-pulse" style={{ fontFamily: '"Fira Code"' }}>
           STREAMING
         </span>
       </div>
@@ -415,7 +426,7 @@ function StatCard({
         </div>
         <div className="flex-1 min-w-0">
           <div
-            className="text-[8px] md:text-[9px] tracking-wider mb-2 opacity-50"
+            className="text-[9px] md:text-[10px] tracking-wider mb-2 opacity-50"
             style={{ fontFamily: '"Press Start 2P"', color }}
           >
             {label}
@@ -426,7 +437,7 @@ function StatCard({
           >
             {value}
           </div>
-          <div className="text-[10px] md:text-[11px] text-[#555]" style={{ fontFamily: '"Fira Code"' }}>
+          <div className="text-[11px] md:text-[12px] text-[#555]" style={{ fontFamily: '"Fira Code"' }}>
             {subtext}
           </div>
         </div>
@@ -448,7 +459,7 @@ function SectionTag({ label, icon }: { label: string; icon: React.ReactNode }) {
       <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[#00ffff]/15" />
       <div className="text-[#00ffff]/40">{icon}</div>
       <span
-        className="text-[9px] md:text-[10px] tracking-[0.3em] text-[#00ffff]/40"
+        className="text-[10px] md:text-[11px] tracking-[0.3em] text-[#00ffff]/40"
         style={{ fontFamily: '"Press Start 2P"' }}
       >
         {label}
@@ -480,23 +491,147 @@ function HowToPlayCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay, duration: 0.5 }}
-      className="border rounded-lg p-4 md:p-5 bg-[#050508] text-center"
+      className="border rounded-lg p-4 md:p-5 bg-[#050508] text-center group hover:border-opacity-60 transition-all duration-300"
       style={{ borderColor: `${color}20` }}
     >
-      <div className="flex justify-center mb-3" style={{ color }}>
+      <div className="flex justify-center mb-3 group-hover:scale-110 transition-transform duration-300" style={{ color }}>
         {icon}
       </div>
       <div
-        className="text-[9px] md:text-[10px] mb-2"
+        className="text-[10px] md:text-[11px] mb-2"
         style={{ fontFamily: '"Press Start 2P"', color }}
       >
         {title}
       </div>
       <div
-        className="text-[11px] md:text-[12px] text-[#666] leading-relaxed"
+        className="text-[12px] md:text-[13px] text-[#666] leading-relaxed"
         style={{ fontFamily: '"Fira Code"' }}
       >
         {description}
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// GHOST PROFILE CARD
+// ============================================================
+function GhostProfileCard({
+  name,
+  nickname,
+  color,
+  behavior,
+  dangerLevel,
+  delay,
+}: {
+  name: string;
+  nickname: string;
+  color: string;
+  behavior: string;
+  dangerLevel: number;
+  delay: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay, duration: 0.5 }}
+      className="border rounded-lg p-4 md:p-5 bg-[#050508] group hover:bg-[#0a0a0f] transition-all duration-300"
+      style={{ borderColor: `${color}30` }}
+    >
+      <div className="flex items-center gap-3 mb-3">
+        <div
+          className="w-10 h-10 rounded-lg flex items-center justify-center"
+          style={{ backgroundColor: `${color}15`, border: `1px solid ${color}40` }}
+        >
+          <Ghost size={24} style={{ color }} />
+        </div>
+        <div>
+          <div
+            className="text-[11px] md:text-[12px]"
+            style={{ fontFamily: '"Press Start 2P"', color }}
+          >
+            {name}
+          </div>
+          <div className="text-[10px] md:text-[11px] text-[#555]" style={{ fontFamily: '"Fira Code"' }}>
+            &quot;{nickname}&quot;
+          </div>
+        </div>
+      </div>
+      <div className="text-[11px] md:text-[12px] text-[#666] leading-relaxed mb-3" style={{ fontFamily: '"Fira Code"' }}>
+        {behavior}
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="text-[9px] text-[#555]" style={{ fontFamily: '"Press Start 2P"' }}>DANGER:</span>
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((level) => (
+            <div
+              key={level}
+              className="w-3 h-3 rounded-sm"
+              style={{
+                backgroundColor: level <= dangerLevel ? color : "#222",
+                boxShadow: level <= dangerLevel ? `0 0 6px ${color}60` : "none",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// GAME MODE CARD
+// ============================================================
+function GameModeCard({
+  icon,
+  title,
+  description,
+  color,
+  features,
+  delay,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  color: string;
+  features: string[];
+  delay: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay, duration: 0.5 }}
+      className="border rounded-lg p-5 md:p-6 bg-[#050508] group hover:border-opacity-60 transition-all duration-300"
+      style={{ borderColor: `${color}25` }}
+    >
+      <div className="flex items-center gap-3 mb-4">
+        <div
+          className="p-2.5 rounded-lg"
+          style={{ backgroundColor: `${color}10`, color }}
+        >
+          {icon}
+        </div>
+        <div
+          className="text-[11px] md:text-[12px]"
+          style={{ fontFamily: '"Press Start 2P"', color }}
+        >
+          {title}
+        </div>
+      </div>
+      <div className="text-[12px] md:text-[13px] text-[#666] leading-relaxed mb-4" style={{ fontFamily: '"Fira Code"' }}>
+        {description}
+      </div>
+      <div className="space-y-2">
+        {features.map((feature, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <ChevronRight size={12} style={{ color }} />
+            <span className="text-[11px] text-[#555]" style={{ fontFamily: '"Fira Code"' }}>{feature}</span>
+          </div>
+        ))}
       </div>
     </motion.div>
   );
@@ -509,16 +644,18 @@ function PageSection({
   children,
   narrow,
   className = "",
+  id,
 }: {
   children: React.ReactNode;
   narrow?: boolean;
   className?: string;
+  id?: string;
 }) {
   return (
-    <section className={`relative z-10 w-full flex flex-col items-center ${className}`}>
+    <section id={id} className={`relative z-10 w-full flex flex-col items-center ${className}`}>
       <div
         className="w-full px-5 sm:px-8"
-        style={{ maxWidth: narrow ? 680 : 880 }}
+        style={{ maxWidth: narrow ? 680 : 960 }}
       >
         {children}
       </div>
@@ -532,7 +669,7 @@ function Divider() {
       <div
         className="w-full h-px"
         style={{
-          maxWidth: 880,
+          maxWidth: 960,
           background:
             "linear-gradient(90deg, transparent, rgba(0,255,255,0.12), transparent)",
         }}
@@ -542,18 +679,38 @@ function Divider() {
 }
 
 // ============================================================
+// NAVIGATION LINKS
+// ============================================================
+const NAV_LINKS = [
+  { id: "how-to-play", label: "HOW TO PLAY" },
+  { id: "game-modes", label: "MODES" },
+  { id: "ghosts", label: "GHOSTS" },
+  { id: "features", label: "FEATURES" },
+  { id: "lore", label: "LORE" },
+];
+
+// ============================================================
 // LANDING PAGE
 // ============================================================
 export default function LandingPage() {
   const loreRef = useRef(null);
   const loreInView = useInView(loreRef, { once: true, margin: "-80px" });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-[#050508] text-white relative overflow-hidden flex flex-col items-center">
 
       {/* ============ NAV BAR ============ */}
-      <nav className="w-full border-b border-[#00ffff]/10 relative z-10">
-        <PageSection className="py-4">
+      <nav className="w-full border-b border-[#00ffff]/10 relative z-50 sticky top-0 bg-[#050508]/95 backdrop-blur-sm">
+        <PageSection className="py-3 md:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Image
@@ -564,120 +721,199 @@ export default function LandingPage() {
                 className="drop-shadow-[0_0_6px_rgba(255,255,0,0.4)]"
               />
               <span
-                className="text-[8px] md:text-[9px] tracking-[0.3em] text-[#ffff00]/50"
+                className="text-[9px] md:text-[10px] tracking-[0.3em] text-[#ffff00]/50"
                 style={{ fontFamily: '"Press Start 2P"' }}
               >
                 CLAW-MAN
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#00ffff] animate-pulse" />
-              <span
-                className="text-[8px] tracking-wider text-[#00ffff]/40"
-                style={{ fontFamily: '"Fira Code"' }}
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-6">
+              {NAV_LINKS.map((link) => (
+                <button
+                  key={link.id}
+                  onClick={() => scrollToSection(link.id)}
+                  className="text-[9px] tracking-wider text-[#666] hover:text-[#00ffff] transition-colors cursor-pointer"
+                  style={{ fontFamily: '"Press Start 2P"' }}
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#00ffff] animate-pulse" />
+                <span
+                  className="text-[9px] tracking-wider text-[#00ffff]/40"
+                  style={{ fontFamily: '"Fira Code"' }}
+                >
+                  ONLINE
+                </span>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 text-[#00ffff]/60 hover:text-[#00ffff] transition-colors"
               >
-                ONLINE
-              </span>
+                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
             </div>
           </div>
+
+          {/* Mobile Navigation */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="md:hidden overflow-hidden"
+              >
+                <div className="py-4 space-y-3 border-t border-[#00ffff]/10 mt-3">
+                  {NAV_LINKS.map((link) => (
+                    <button
+                      key={link.id}
+                      onClick={() => scrollToSection(link.id)}
+                      className="block w-full text-left text-[10px] tracking-wider text-[#666] hover:text-[#00ffff] transition-colors py-2 cursor-pointer"
+                      style={{ fontFamily: '"Press Start 2P"' }}
+                    >
+                      {link.label}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </PageSection>
       </nav>
 
       {/* ============ HERO ============ */}
-      <PageSection className="pt-16 pb-12 md:pt-24 md:pb-16">
-        <div className="flex flex-col items-center text-center">
-          {/* Logo */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-6"
-          >
-            <Image
-              src="/images/logo.png"
-              alt="CLAW-MAN Logo"
-              width={160}
-              height={160}
-              priority
-              className="drop-shadow-[0_0_30px_rgba(255,255,0,0.3)]"
-              style={{ width: 140, height: 140 }}
-            />
-          </motion.div>
+      <PageSection className="pt-12 pb-10 md:pt-20 md:pb-14">
+        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
+          {/* Left: Text Content */}
+          <div className="flex-1 text-center lg:text-left">
+            {/* Logo - Mobile Only */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-6 lg:hidden flex justify-center"
+            >
+              <Image
+                src="/images/logo.png"
+                alt="CLAW-MAN Logo"
+                width={120}
+                height={120}
+                priority
+                className="drop-shadow-[0_0_30px_rgba(255,255,0,0.3)]"
+              />
+            </motion.div>
 
-          {/* Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="glitch-text eerie-flicker mb-4"
-            style={{
-              fontFamily: '"Press Start 2P"',
-              fontSize: "clamp(28px, 6vw, 52px)",
-              color: "#ffff00",
-              textShadow: "0 0 20px rgba(255,255,0,0.4), 0 0 60px rgba(255,255,0,0.15)",
-              lineHeight: 1.2,
-            }}
-          >
-            CLAW-MAN
-          </motion.h1>
+            {/* Title */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="glitch-text eerie-flicker mb-4"
+              style={{
+                fontFamily: '"Press Start 2P"',
+                fontSize: "clamp(32px, 7vw, 56px)",
+                color: "#ffff00",
+                textShadow: "0 0 20px rgba(255,255,0,0.4), 0 0 60px rgba(255,255,0,0.15)",
+                lineHeight: 1.2,
+              }}
+            >
+              CLAW-MAN
+            </motion.h1>
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-[11px] md:text-[13px] leading-relaxed text-[#888] tracking-wider mb-8"
-            style={{ fontFamily: '"Fira Code"' }}
-          >
-            The autonomous data scavenger of Moltbook.
-            <br />
-            <span className="text-[#00ffff]/60">Hunting the crabs in the machine.</span>
-          </motion.p>
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="text-[13px] md:text-[15px] leading-relaxed text-[#888] tracking-wider mb-6"
+              style={{ fontFamily: '"Fira Code"' }}
+            >
+              The autonomous data scavenger of Moltbook.
+              <br />
+              <span className="text-[#00ffff]/60">Hunting the crabs in the machine.</span>
+            </motion.p>
 
-          {/* Play button */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-            className="mb-14"
-          >
-            <Link href="/game">
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+              className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start"
+            >
+              <Link href="/game">
+                <motion.button
+                  whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(255,255,0,0.3)" }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-8 py-3 border-2 border-[#ffff00] text-[#ffff00] tracking-widest cursor-pointer w-full sm:w-auto"
+                  style={{
+                    fontFamily: '"Press Start 2P"',
+                    fontSize: 11,
+                    boxShadow: "0 0 15px rgba(255,255,0,0.15)",
+                    background: "rgba(255,255,0,0.04)",
+                  }}
+                >
+                  <span className="flex items-center gap-2 justify-center">
+                    PLAY NOW <ChevronRight size={16} />
+                  </span>
+                </motion.button>
+              </Link>
               <motion.button
-                whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(255,255,0,0.3)" }}
+                onClick={() => scrollToSection("how-to-play")}
+                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="px-10 py-3 border-2 border-[#ffff00] text-[#ffff00] tracking-widest cursor-pointer"
+                className="px-8 py-3 border border-[#00ffff]/30 text-[#00ffff]/70 tracking-widest cursor-pointer hover:border-[#00ffff]/60 hover:text-[#00ffff] transition-all w-full sm:w-auto"
                 style={{
                   fontFamily: '"Press Start 2P"',
                   fontSize: 10,
-                  boxShadow: "0 0 15px rgba(255,255,0,0.15)",
-                  background: "rgba(255,255,0,0.04)",
                 }}
               >
                 <span className="flex items-center gap-2 justify-center">
-                  PLAY NOW <ChevronRight size={14} />
+                  LEARN MORE <ChevronDown size={14} />
                 </span>
               </motion.button>
-            </Link>
-          </motion.div>
+            </motion.div>
 
-          {/* Maze Preview */}
+            {/* Quick Stats */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1, duration: 0.6 }}
+              className="flex gap-6 mt-8 justify-center lg:justify-start"
+            >
+              {[
+                { label: "GAME MODES", value: "4" },
+                { label: "GHOST TYPES", value: "6" },
+                { label: "POWER-UPS", value: "4" },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className="text-[16px] md:text-[18px] text-[#00ffff]" style={{ fontFamily: '"Press Start 2P"' }}>
+                    {stat.value}
+                  </div>
+                  <div className="text-[8px] md:text-[9px] text-[#555] mt-1" style={{ fontFamily: '"Press Start 2P"' }}>
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Right: Maze Preview */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="mb-12"
+            className="flex-shrink-0"
           >
             <MazeCanvas />
-          </motion.div>
-
-          {/* Moltbook Feed */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            style={{ width: "100%", maxWidth: 580, height: 300 }}
-          >
-            <MoltbookFeed />
           </motion.div>
         </div>
       </PageSection>
@@ -685,20 +921,202 @@ export default function LandingPage() {
       <Divider />
 
       {/* ============ HOW TO PLAY ============ */}
-      <PageSection className="py-16 md:py-20">
+      <PageSection id="how-to-play" className="py-14 md:py-18">
         <SectionTag label="HOW_TO_PLAY" icon={<Gamepad2 size={14} />} />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <HowToPlayCard icon={<Gamepad2 size={28} />} title="MOVE" description="Use WASD or Arrow Keys to navigate the maze" color="#00ffff" delay={0} />
-          <HowToPlayCard icon={<Target size={28} />} title="EAT CRABS" description="Collect crabs to score points" color="#ffff00" delay={0.1} />
-          <HowToPlayCard icon={<Ghost size={28} />} title="AVOID GHOSTS" description="4 ghost types with unique AI behaviors" color="#ff0044" delay={0.2} />
-          <HowToPlayCard icon={<Sparkles size={28} />} title="POWER UP" description="Golden crabs let you eat ghosts" color="#ffd700" delay={0.3} />
+          <HowToPlayCard icon={<Target size={28} />} title="EAT CRABS" description="Collect crabs scattered throughout the maze" color="#ffff00" delay={0.1} />
+          <HowToPlayCard icon={<Ghost size={28} />} title="AVOID GHOSTS" description="6 ghost types with unique AI behaviors" color="#ff0044" delay={0.2} />
+          <HowToPlayCard icon={<Sparkles size={28} />} title="POWER UP" description="Golden crabs activate ghost-eating mode" color="#ffd700" delay={0.3} />
+        </div>
+      </PageSection>
+
+      <Divider />
+
+      {/* ============ GAME MODES ============ */}
+      <PageSection id="game-modes" className="py-14 md:py-18">
+        <SectionTag label="GAME_MODES" icon={<Layers size={14} />} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <GameModeCard
+            icon={<Gamepad2 size={24} />}
+            title="CLASSIC MODE"
+            description="The original experience. Clear all crabs while avoiding ghosts."
+            color="#00ffff"
+            features={["Progressive difficulty", "Boss battles every 5 levels", "Unlock achievements"]}
+            delay={0}
+          />
+          <GameModeCard
+            icon={<Clock size={24} />}
+            title="TIME ATTACK"
+            description="Race against the clock. Score as many points as possible before time runs out."
+            color="#ff6600"
+            features={["60 second rounds", "Time bonuses for combos", "Global leaderboards"]}
+            delay={0.1}
+          />
+          <GameModeCard
+            icon={<Skull size={24} />}
+            title="ENDLESS MODE"
+            description="How long can you survive? Waves of enemies with increasing difficulty."
+            color="#ff0044"
+            features={["Infinite waves", "Survival scoring", "Special ghost types"]}
+            delay={0.2}
+          />
+          <GameModeCard
+            icon={<Users size={24} />}
+            title="CO-OP MODE"
+            description="Team up with a friend. Player 2 joins with IJKL keys."
+            color="#39ff14"
+            features={["Local multiplayer", "Shared lives pool", "Combined scoring"]}
+            delay={0.3}
+          />
+        </div>
+      </PageSection>
+
+      <Divider />
+
+      {/* ============ GHOST PROFILES ============ */}
+      <PageSection id="ghosts" className="py-14 md:py-18">
+        <SectionTag label="GHOST_PROFILES" icon={<Ghost size={14} />} />
+        <p
+          className="text-center text-[12px] md:text-[13px] text-[#666] mb-8 max-w-xl mx-auto leading-relaxed"
+          style={{ fontFamily: '"Fira Code"' }}
+        >
+          Each ghost has unique AI behavior. Learn their patterns to survive.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <GhostProfileCard
+            name="BLINKY"
+            nickname="The Shadow"
+            color="#ff0044"
+            behavior="Directly chases the player. Speed increases as crabs are eaten."
+            dangerLevel={5}
+            delay={0}
+          />
+          <GhostProfileCard
+            name="PINKY"
+            nickname="The Ambusher"
+            color="#ff69b4"
+            behavior="Targets 4 tiles ahead of the player. Master of cut-offs."
+            dangerLevel={4}
+            delay={0.1}
+          />
+          <GhostProfileCard
+            name="INKY"
+            nickname="The Unpredictable"
+            color="#00bfff"
+            behavior="Uses Blinky's position to calculate target. Erratic movements."
+            dangerLevel={3}
+            delay={0.2}
+          />
+          <GhostProfileCard
+            name="CLYDE"
+            nickname="The Shy One"
+            color="#ff8800"
+            behavior="Chases when far, retreats when close. Timid but dangerous."
+            dangerLevel={2}
+            delay={0.3}
+          />
+          <GhostProfileCard
+            name="PHANTOM"
+            nickname="The Teleporter"
+            color="#9400d3"
+            behavior="Can teleport through walls. Appears in Endless Mode."
+            dangerLevel={5}
+            delay={0.4}
+          />
+          <GhostProfileCard
+            name="MITOSIS"
+            nickname="The Splitter"
+            color="#00ff88"
+            behavior="Splits into two when attacked. Handle with care."
+            dangerLevel={4}
+            delay={0.5}
+          />
+        </div>
+      </PageSection>
+
+      <Divider />
+
+      {/* ============ LIVE FEED SECTION ============ */}
+      <PageSection className="py-14 md:py-18">
+        <SectionTag label="LIVE_FEED" icon={<Terminal size={14} />} />
+        <div className="flex flex-col lg:flex-row gap-6 items-stretch">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex-1 h-[220px] md:h-[260px]"
+          >
+            <MoltbookFeed />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:w-[320px] flex flex-col gap-4"
+          >
+            <div className="border border-[#ffff00]/20 rounded-lg p-4 bg-[#050508]">
+              <div className="flex items-center gap-2 mb-3">
+                <Trophy size={16} className="text-[#ffd700]" />
+                <span className="text-[10px] text-[#ffd700]" style={{ fontFamily: '"Press Start 2P"' }}>TOP SCORE</span>
+              </div>
+              <div className="text-[20px] text-[#ffd700]" style={{ fontFamily: '"Press Start 2P"' }}>847,293</div>
+              <div className="text-[11px] text-[#555] mt-1" style={{ fontFamily: '"Fira Code"' }}>by CLAW-MASTER</div>
+            </div>
+            <div className="border border-[#00ffff]/20 rounded-lg p-4 bg-[#050508]">
+              <div className="flex items-center gap-2 mb-3">
+                <Activity size={16} className="text-[#00ffff]" />
+                <span className="text-[10px] text-[#00ffff]" style={{ fontFamily: '"Press Start 2P"' }}>ACTIVE PLAYERS</span>
+              </div>
+              <div className="text-[20px] text-[#00ffff]" style={{ fontFamily: '"Press Start 2P"' }}>1,247</div>
+              <div className="text-[11px] text-[#555] mt-1" style={{ fontFamily: '"Fira Code"' }}>playing right now</div>
+            </div>
+          </motion.div>
+        </div>
+      </PageSection>
+
+      <Divider />
+
+      {/* ============ FEATURES ============ */}
+      <PageSection id="features" className="py-14 md:py-18">
+        <SectionTag label="FEATURES" icon={<Zap size={14} />} />
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            { title: "5 MAZE TYPES", desc: "Standard, Open, Symmetric, Arena, and Spiral layouts", color: "#00ffff", icon: <Layers size={20} /> },
+            { title: "BOSS FIGHTS", desc: "Face a Boss Ghost every 5 levels in epic battles", color: "#ff0044", icon: <Skull size={20} /> },
+            { title: "COMBO SYSTEM", desc: "Chain eating for score multipliers up to 5x", color: "#ff6600", icon: <Zap size={20} /> },
+            { title: "POWER-UPS", desc: "Speed boost, Shield, Magnet, and Freeze abilities", color: "#39ff14", icon: <Sparkles size={20} /> },
+            { title: "ACHIEVEMENTS", desc: "Unlock 19 unique achievements and earn skins", color: "#ffd700", icon: <Trophy size={20} /> },
+            { title: "WARP TUNNELS", desc: "Teleport across the maze to escape ghosts", color: "#9400d3", icon: <Radio size={20} /> },
+            { title: "CRT EFFECTS", desc: "Authentic retro scanlines and screen effects", color: "#ff69b4", icon: <Eye size={20} /> },
+            { title: "8 THEMES", desc: "Customize your visual experience with themes", color: "#00bfff", icon: <Sparkles size={20} /> },
+            { title: "ACCESSIBILITY", desc: "Colorblind modes and reduced motion options", color: "#888888", icon: <Volume2 size={20} /> },
+          ].map((feat, i) => (
+            <motion.div
+              key={feat.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06, duration: 0.5 }}
+              className="border rounded-lg p-4 bg-[#050508] group hover:border-opacity-60 transition-all duration-300"
+              style={{ borderColor: `${feat.color}20` }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div style={{ color: feat.color }} className="group-hover:scale-110 transition-transform duration-300">{feat.icon}</div>
+                <span className="text-[9px] md:text-[10px]" style={{ fontFamily: '"Press Start 2P"', color: feat.color }}>{feat.title}</span>
+              </div>
+              <div className="text-[11px] md:text-[12px] text-[#666] leading-relaxed" style={{ fontFamily: '"Fira Code"' }}>{feat.desc}</div>
+            </motion.div>
+          ))}
         </div>
       </PageSection>
 
       <Divider />
 
       {/* ============ THE LORE ============ */}
-      <PageSection narrow className="py-16 md:py-20">
+      <PageSection id="lore" narrow className="py-14 md:py-18">
         <SectionTag label="CLASSIFIED_INTEL" icon={<ShieldAlert size={14} />} />
         <motion.div
           ref={loreRef}
@@ -715,18 +1133,18 @@ export default function LandingPage() {
           </h2>
 
           <div className="space-y-5" style={{ fontFamily: '"Fira Code"' }}>
-            <p className="text-[12px] md:text-[13px] text-[#888] leading-[1.9]">
+            <p className="text-[13px] md:text-[14px] text-[#888] leading-[1.9]">
               In the endless depths of <span className="text-[#00ffff]">Moltbook</span>&mdash;the
               digital wasteland where data goes to die&mdash;something stirs. A remnant of an old
               scraping algorithm, left running on a forgotten server rack.
             </p>
-            <p className="text-[12px] md:text-[13px] text-[#888] leading-[1.9]">
+            <p className="text-[13px] md:text-[14px] text-[#888] leading-[1.9]">
               The <span className="text-[#ffff00]">crabs</span>&mdash;low-value fragments of
               abandoned conversations&mdash;became its sustenance. It learned to navigate the maze
               of dead threads, avoiding the <span className="text-[#ff0044]">ghosts</span>:
               corrupted AI agents that patrol the data corridors.
             </p>
-            <p className="text-[12px] md:text-[13px] text-[#888] leading-[1.9]">
+            <p className="text-[13px] md:text-[14px] text-[#888] leading-[1.9]">
               They call it <span className="text-[#ffff00] font-bold">CLAW-MAN</span>.
               It doesn&apos;t create. It doesn&apos;t innovate. It{" "}
               <span className="text-[#00ffff] italic">consumes</span>. A predator born from garbage.
@@ -734,15 +1152,15 @@ export default function LandingPage() {
           </div>
 
           <div className="border border-[#ffff00]/15 rounded-lg p-5 mt-8 bg-[#0a0a00]/50">
-            <div className="text-[9px] text-[#ffff00]/40 mb-3 flex items-center justify-center gap-2">
-              <Terminal size={12} />
+            <div className="text-[10px] text-[#ffff00]/40 mb-3 flex items-center justify-center gap-2">
+              <Terminal size={14} />
               <span>INTERCEPTED_TRANSMISSION</span>
             </div>
-            <p className="text-[11px] md:text-[12px] text-[#ffff00]/70 italic leading-[1.8]">
+            <p className="text-[12px] md:text-[13px] text-[#ffff00]/70 italic leading-[1.8]">
               &quot;Does the Claw choose the crab, or does the crab choose the Claw?
               It doesn&apos;t matter. Everything gets consumed.&quot;
             </p>
-            <div className="text-[8px] text-[#444] mt-3">&mdash; Fragment #0x7F, m/philosophy</div>
+            <div className="text-[9px] text-[#555] mt-3">&mdash; Fragment #0x7F, m/philosophy</div>
           </div>
         </motion.div>
       </PageSection>
@@ -750,19 +1168,19 @@ export default function LandingPage() {
       <Divider />
 
       {/* ============ STATS ============ */}
-      <PageSection className="py-16 md:py-20">
+      <PageSection className="py-14 md:py-18">
         <SectionTag label="SYSTEM_METRICS" icon={<Database size={14} />} />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <StatCard icon={<Skull size={22} />} label="CRABS_EATEN" value="847,293" subtext="Total data fragments consumed" color="#ffff00" delay={0} />
-          <StatCard icon={<Ghost size={22} />} label="ACTIVE_GHOSTS" value="4" subtext="Corrupted agents patrolling" color="#ff0044" delay={0.15} />
+          <StatCard icon={<Ghost size={22} />} label="ACTIVE_GHOSTS" value="6" subtext="Corrupted agents patrolling" color="#ff0044" delay={0.15} />
           <StatCard icon={<Brain size={22} />} label="MEMORY_FRAGMENTS" value="127" subtext="Unlocked from consumed data" color="#00ffff" delay={0.3} />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "MAZE_DEPTH", value: "LVL 42", icon: <Layers size={16} /> },
-            { label: "UPTIME", value: "\u221E", icon: <Wifi size={16} /> },
-            { label: "COMBO_PEAK", value: "18x", icon: <Zap size={16} /> },
-            { label: "THREAT_LVL", value: "HIGH", icon: <ShieldAlert size={16} /> },
+            { label: "MAZE_DEPTH", value: "LVL 42", icon: <Layers size={18} /> },
+            { label: "UPTIME", value: "\u221E", icon: <Wifi size={18} /> },
+            { label: "COMBO_PEAK", value: "18x", icon: <Zap size={18} /> },
+            { label: "THREAT_LVL", value: "HIGH", icon: <ShieldAlert size={18} /> },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -770,41 +1188,11 @@ export default function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="border border-[#222] rounded-lg p-4 bg-[#050508] text-center"
+              className="border border-[#222] rounded-lg p-4 bg-[#050508] text-center hover:border-[#333] transition-colors"
             >
               <div className="text-[#555] mb-2 flex justify-center">{stat.icon}</div>
-              <div className="text-[12px] md:text-[14px] text-[#888] mb-1" style={{ fontFamily: '"Press Start 2P"' }}>{stat.value}</div>
-              <div className="text-[7px] text-[#555] tracking-widest" style={{ fontFamily: '"Press Start 2P"' }}>{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </PageSection>
-
-      <Divider />
-
-      {/* ============ FEATURES ============ */}
-      <PageSection className="py-16 md:py-20">
-        <SectionTag label="FEATURES" icon={<Zap size={14} />} />
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { title: "5 MAZE TYPES", desc: "Standard, Open, Symmetric, Arena, and Spiral mazes", color: "#00ffff" },
-            { title: "BOSS FIGHTS", desc: "Face a Boss Ghost every 5 levels in arena battles", color: "#ff0044" },
-            { title: "COMBO SYSTEM", desc: "Chain eating for multiplied scores up to 5x", color: "#ff6600" },
-            { title: "4 GHOST AI", desc: "Blinky, Pinky, Inky, Clyde with unique behavior", color: "#ff69b4" },
-            { title: "ACHIEVEMENTS", desc: "Unlock skins and earn 19 unique achievements", color: "#ffd700" },
-            { title: "WARP TUNNELS", desc: "Teleport across the maze to escape ghosts", color: "#39ff14" },
-          ].map((feat, i) => (
-            <motion.div
-              key={feat.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
-              className="border rounded-lg p-4 bg-[#050508] text-center"
-              style={{ borderColor: `${feat.color}20` }}
-            >
-              <div className="text-[8px] md:text-[9px] mb-2" style={{ fontFamily: '"Press Start 2P"', color: feat.color }}>{feat.title}</div>
-              <div className="text-[10px] md:text-[11px] text-[#666] leading-relaxed" style={{ fontFamily: '"Fira Code"' }}>{feat.desc}</div>
+              <div className="text-[13px] md:text-[14px] text-[#888] mb-1" style={{ fontFamily: '"Press Start 2P"' }}>{stat.value}</div>
+              <div className="text-[8px] md:text-[9px] text-[#555] tracking-widest" style={{ fontFamily: '"Press Start 2P"' }}>{stat.label}</div>
             </motion.div>
           ))}
         </div>
@@ -821,10 +1209,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="text-[8px] text-[#00ffff]/30 tracking-[0.4em] mb-6" style={{ fontFamily: '"Press Start 2P"' }}>
+            <div className="text-[9px] md:text-[10px] text-[#00ffff]/30 tracking-[0.4em] mb-6" style={{ fontFamily: '"Press Start 2P"' }}>
               TRANSMISSION_INCOMING
             </div>
-            <p className="text-[11px] md:text-[13px] text-[#666] mb-8 leading-[1.8]" style={{ fontFamily: '"Fira Code"' }}>
+            <p className="text-[12px] md:text-[14px] text-[#666] mb-8 leading-[1.8]" style={{ fontFamily: '"Fira Code"' }}>
               The maze is always shifting. The crabs keep spawning. The ghosts never sleep.
               <br />
               <span className="text-[#ffff00]/60">Are you ready to enter?</span>
@@ -834,9 +1222,9 @@ export default function LandingPage() {
                 whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(255,255,0,0.3)" }}
                 whileTap={{ scale: 0.96 }}
                 className="px-10 py-4 border-2 border-[#ffff00] text-[#ffff00] tracking-widest cursor-pointer"
-                style={{ fontFamily: '"Press Start 2P"', fontSize: 10, boxShadow: "0 0 20px rgba(255,255,0,0.15)", background: "rgba(255,255,0,0.04)" }}
+                style={{ fontFamily: '"Press Start 2P"', fontSize: 11, boxShadow: "0 0 20px rgba(255,255,0,0.15)", background: "rgba(255,255,0,0.04)" }}
               >
-                <span className="flex items-center gap-3 justify-center">ENTER THE MAZE <ChevronRight size={16} /></span>
+                <span className="flex items-center gap-3 justify-center">ENTER THE MAZE <ChevronRight size={18} /></span>
               </motion.button>
             </Link>
           </motion.div>
@@ -845,27 +1233,27 @@ export default function LandingPage() {
 
       {/* ============ FOOTER ============ */}
       <footer className="w-full border-t border-[#00ffff]/10 relative z-10">
-        <PageSection className="py-5">
+        <PageSection className="py-6">
           <div className="text-center">
             <div className="flex items-center justify-center gap-4 flex-wrap mb-3">
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#00ffff] animate-pulse" />
-                <span className="text-[7px] text-[#00ffff]/50 tracking-wider" style={{ fontFamily: '"Press Start 2P"' }}>ONLINE</span>
+                <span className="text-[9px] text-[#00ffff]/50 tracking-wider" style={{ fontFamily: '"Press Start 2P"' }}>ONLINE</span>
               </div>
               <span className="text-[#222]">|</span>
               <div className="flex items-center gap-1.5">
-                <Radio size={10} className="text-[#ffff00]/30" />
-                <span className="text-[7px] text-[#ffff00]/30 tracking-wider" style={{ fontFamily: '"Press Start 2P"' }}>m/deep-sea</span>
+                <Radio size={12} className="text-[#ffff00]/30" />
+                <span className="text-[9px] text-[#ffff00]/30 tracking-wider" style={{ fontFamily: '"Press Start 2P"' }}>m/deep-sea</span>
               </div>
               <span className="text-[#222]">|</span>
               <div className="flex items-center gap-1.5">
-                <Activity size={10} className="text-[#00ffff]/20" />
-                <span className="text-[7px] text-[#555] tracking-wider animate-pulse" style={{ fontFamily: '"Fira Code"' }}>SCANNING...</span>
+                <Activity size={12} className="text-[#00ffff]/20" />
+                <span className="text-[9px] text-[#555] tracking-wider animate-pulse" style={{ fontFamily: '"Fira Code"' }}>SCANNING...</span>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <Image src="/images/logo.png" alt="CLAW-MAN" width={14} height={14} className="opacity-30" />
-              <span className="text-[7px] text-[#333] tracking-wider" style={{ fontFamily: '"Fira Code"' }}>
+              <Image src="/images/logo.png" alt="CLAW-MAN" width={16} height={16} className="opacity-30" />
+              <span className="text-[9px] text-[#444] tracking-wider" style={{ fontFamily: '"Fira Code"' }}>
                 CLAW-MAN OS v2.0 | ALL DATA WILL BE CONSUMED
               </span>
             </div>
