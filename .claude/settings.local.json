@@ -25,7 +25,12 @@
       "Bash(tree:*)",
       "Bash(rm:*)",
       "Bash(npm run dev)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebSearch",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:libraries.io)",
+      "WebFetch(domain:simonwillison.net)",
+      "WebFetch(domain:www.moltbook.com)"
     ]
   }
 }

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=700, height=900">
+  <title>CLAW-MAN Meme - Galaxy Brain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Impact&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 700px;
+      height: 900px;
+      background: #050508;
+      font-family: 'Impact', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .meme-container {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+    }
+
+    .panel {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      border-bottom: 3px solid #00ffff20;
+    }
+
+    .panel:last-child {
+      border-bottom: none;
+    }
+
+    .brain-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .text-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #0a0a12;
+    }
+
+    /* Brain levels */
+    .brain {
+      font-size: 80px;
+      position: relative;
+    }
+
+    /* Level 1 - Small brain */
+    .level-1 .brain-side {
+      background: linear-gradient(135deg, #1a1a2e, #0a0a15);
+    }
+
+    .level-1 .brain {
+      filter: grayscale(50%);
+      opacity: 0.7;
+    }
+
+    /* Level 2 - Normal brain */
+    .level-2 .brain-side {
+      background: linear-gradient(135deg, #1a2a3a, #0a1520);
+    }
+
+    .level-2 .brain {
+      filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.3));
+    }
+
+    /* Level 3 - Glowing brain */
+    .level-3 .brain-side {
+      background: linear-gradient(135deg, #2a1a4a, #150a25);
+    }
+
+    .level-3 .brain {
+      filter: drop-shadow(0 0 20px rgba(150, 0, 255, 0.5));
+      animation: brainPulse 2s ease-in-out infinite;
+    }
+
+    /* Level 4 - GALAXY BRAIN */
+    .level-4 .brain-side {
+      background:
+        radial-gradient(ellipse at center, rgba(255, 255, 0, 0.2) 0%, transparent 50%),
+        linear-gradient(135deg, #2a2a0a, #151505);
+      animation: galaxyBg 3s ease-in-out infinite;
+    }
+
+    .level-4 .brain {
+      filter: drop-shadow(0 0 30px rgba(255, 255, 0, 0.8));
+      animation: galaxyBrain 1.5s ease-in-out infinite;
+    }
+
+    @keyframes brainPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes galaxyBrain {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px rgba(255, 255, 0, 0.8)); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 50px rgba(255, 255, 0, 1)); }
+    }
+
+    @keyframes galaxyBg {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Stars for galaxy */
+    .stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s ease-in-out infinite;
+    }
+
+    .star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+    .star:nth-child(2) { top: 30%; left: 80%; animation-delay: 0.5s; }
+    .star:nth-child(3) { top: 60%; left: 30%; animation-delay: 1s; }
+    .star:nth-child(4) { top: 80%; left: 70%; animation-delay: 1.5s; }
+    .star:nth-child(5) { top: 20%; left: 50%; animation-delay: 0.3s; }
+    .star:nth-child(6) { top: 70%; left: 15%; animation-delay: 0.8s; }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* Text styling */
+    .meme-text {
+      font-size: 24px;
+      color: white;
+      text-align: center;
+      line-height: 1.3;
+      text-shadow:
+        2px 2px 0 #000,
+        -1px -1px 0 #000;
+    }
+
+    .highlight-yellow {
+      color: #ffff00;
+      text-shadow: 2px 2px 0 #000, 0 0 15px rgba(255, 255, 0, 0.5);
+    }
+
+    .highlight-cyan {
+      color: #00ffff;
+      text-shadow: 2px 2px 0 #000, 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+
+    .highlight-purple {
+      color: #bf7fff;
+      text-shadow: 2px 2px 0 #000, 0 0 15px rgba(191, 127, 255, 0.5);
+    }
+
+    .small-text {
+      font-size: 16px;
+      color: #888;
+      display: block;
+      margin-top: 8px;
+    }
+
+    /* Level 4 special text */
+    .level-4 .meme-text {
+      font-size: 22px;
+    }
+
+    .galaxy-text {
+      background: linear-gradient(90deg, #ff0, #0ff, #f0f, #ff0);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientMove 3s linear infinite;
+      font-size: 28px;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    /* CLAW-MAN icon for level 4 */
+    .clawman-mini {
+      width: 50px;
+      height: 50px;
+      background: #ffff00;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
+    }
+
+    .clawman-mini::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -3px;
+      width: 50%;
+      height: 40%;
+      background: #0a0a12;
+      transform: translateY(-50%);
+      clip-path: polygon(0 25%, 100% 50%, 0 75%);
+    }
+
+    /* Watermark */
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: #00ffff40;
+      z-index: 50;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.08) 0px,
+        rgba(0, 0, 0, 0.08) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="meme-container">
+    <!-- Level 1 -->
+    <div class="panel level-1">
+      <div class="brain-side">
+        <span class="brain">🧠</span>
+      </div>
+      <div class="text-side">
+        <p class="meme-text">
+          Running away from ghosts
+          <span class="small-text">basic survival instinct</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Level 2 -->
+    <div class="panel level-2">
+      <div class="brain-side">
+        <span class="brain">🧠</span>
+      </div>
+      <div class="text-side">
+        <p class="meme-text">
+          Eating <span class="highlight-cyan">power pellets</span> to chase ghosts
+          <span class="small-text">understanding game mechanics</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Level 3 -->
+    <div class="panel level-3">
+      <div class="brain-side">
+        <span class="brain">🧠</span>
+      </div>
+      <div class="text-side">
+        <p class="meme-text">
+          Learning each <span class="highlight-purple">ghost's AI pattern</span>
+          <span class="small-text">BLINKY chases, PINKY ambushes...</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Level 4 - GALAXY BRAIN -->
+    <div class="panel level-4">
+      <div class="brain-side">
+        <div class="stars">
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+          <div class="star"></div>
+        </div>
+        <span class="brain">🧠</span>
+        <div class="clawman-mini"></div>
+      </div>
+      <div class="text-side">
+        <p class="meme-text">
+          <span class="galaxy-text">CONSUMING ALL DATA</span><br>
+          in the Moltbook maze because<br>
+          <span class="highlight-yellow">"everything gets consumed"</span>
+          <span class="small-text">🦀 true CLAW-MAN enlightenment 🦀</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark">@CLAWMAN</div>
+  <div class="scanlines"></div>
+</body>
+</html>

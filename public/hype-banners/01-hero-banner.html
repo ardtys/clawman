@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200, height=630">
+  <title>CLAW-MAN - Hero Banner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 1200px;
+      height: 630px;
+      background: #050508;
+      font-family: 'Press Start 2P', monospace;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* CRT Scanlines */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Animated Grid Background */
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(40px, 40px); }
+    }
+
+    /* Maze Pattern */
+    .maze-pattern {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 200px;
+      opacity: 0.3;
+      background:
+        repeating-linear-gradient(90deg, #00ffff 0px, #00ffff 20px, transparent 20px, transparent 40px),
+        repeating-linear-gradient(0deg, #00ffff 0px, #00ffff 20px, transparent 20px, transparent 40px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+    }
+
+    /* Main Content */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 40px;
+    }
+
+    /* CLAW-MAN Character */
+    .clawman {
+      width: 180px;
+      height: 180px;
+      background: #ffff00;
+      border-radius: 50%;
+      position: relative;
+      animation: pulse 2s ease-in-out infinite, float 3s ease-in-out infinite;
+      box-shadow:
+        0 0 60px rgba(255, 255, 0, 0.6),
+        0 0 120px rgba(255, 255, 0, 0.3),
+        inset -20px -20px 40px rgba(200, 180, 0, 0.4);
+    }
+
+    .clawman::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 50%;
+      height: 40%;
+      background: #050508;
+      transform: translateY(-50%) rotate(0deg);
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      animation: chomp 0.4s ease-in-out infinite;
+    }
+
+    .clawman::after {
+      content: '';
+      position: absolute;
+      top: 25%;
+      left: 30%;
+      width: 20px;
+      height: 20px;
+      background: #050508;
+      border-radius: 50%;
+    }
+
+    @keyframes chomp {
+      0%, 100% { clip-path: polygon(0 20%, 100% 50%, 0 80%); }
+      50% { clip-path: polygon(0 45%, 100% 50%, 0 55%); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 60px rgba(255, 255, 0, 0.6), 0 0 120px rgba(255, 255, 0, 0.3); }
+      50% { box-shadow: 0 0 80px rgba(255, 255, 0, 0.8), 0 0 160px rgba(255, 255, 0, 0.4); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    /* Title */
+    .title {
+      font-size: 72px;
+      color: #ffff00;
+      text-shadow:
+        0 0 20px rgba(255, 255, 0, 0.8),
+        0 0 40px rgba(255, 255, 0, 0.5),
+        0 0 60px rgba(255, 255, 0, 0.3),
+        4px 4px 0 #aa8800;
+      margin-top: 30px;
+      letter-spacing: 8px;
+      animation: glitch 3s infinite;
+    }
+
+    @keyframes glitch {
+      0%, 90%, 100% { transform: translate(0); }
+      92% { transform: translate(-3px, 2px); }
+      94% { transform: translate(3px, -2px); }
+      96% { transform: translate(-2px, -1px); }
+      98% { transform: translate(2px, 1px); }
+    }
+
+    /* Tagline */
+    .tagline {
+      font-size: 18px;
+      color: #00ffff;
+      margin-top: 25px;
+      letter-spacing: 12px;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+      animation: flicker 4s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 1; }
+      93% { opacity: 0.8; }
+      94% { opacity: 1; }
+      96% { opacity: 0.9; }
+      97% { opacity: 1; }
+    }
+
+    /* Subtitle */
+    .subtitle {
+      font-size: 14px;
+      color: #888;
+      margin-top: 20px;
+      letter-spacing: 4px;
+    }
+
+    /* Floating Crabs */
+    .crab {
+      position: absolute;
+      font-size: 30px;
+      animation: crabFloat 4s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px rgba(255, 102, 0, 0.8));
+    }
+
+    .crab:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+    .crab:nth-child(2) { top: 25%; right: 15%; animation-delay: 1s; }
+    .crab:nth-child(3) { bottom: 30%; left: 8%; animation-delay: 2s; }
+    .crab:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 0.5s; }
+    .crab:nth-child(5) { top: 40%; left: 20%; animation-delay: 1.5s; }
+
+    @keyframes crabFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+      50% { transform: translateY(-20px) rotate(10deg); opacity: 1; }
+    }
+
+    /* Ghosts */
+    .ghost {
+      position: absolute;
+      width: 50px;
+      height: 60px;
+      border-radius: 25px 25px 0 0;
+      animation: ghostFloat 3s ease-in-out infinite;
+    }
+
+    .ghost::before {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: inherit;
+      clip-path: polygon(0 0, 20% 100%, 40% 0, 60% 100%, 80% 0, 100% 100%, 100% 0);
+    }
+
+    .ghost::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 10px;
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 18px 0 0 white;
+    }
+
+    .ghost-red { background: #ff0044; top: 20%; right: 25%; animation-delay: 0s; }
+    .ghost-pink { background: #ff69b4; bottom: 35%; right: 20%; animation-delay: 1s; }
+    .ghost-cyan { background: #00bfff; top: 35%; left: 15%; animation-delay: 2s; }
+
+    @keyframes ghostFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.7; }
+      50% { transform: translateY(-25px); opacity: 0.9; }
+    }
+
+    /* Moltbook Badge */
+    .badge {
+      position: absolute;
+      bottom: 30px;
+      right: 40px;
+      font-size: 12px;
+      color: #00ffff;
+      opacity: 0.6;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="maze-pattern"></div>
+
+  <!-- Floating Elements -->
+  <div class="crab">🦀</div>
+  <div class="crab">🦀</div>
+  <div class="crab">🦀</div>
+  <div class="crab">🦀</div>
+  <div class="crab">🦀</div>
+
+  <div class="ghost ghost-red"></div>
+  <div class="ghost ghost-pink"></div>
+  <div class="ghost ghost-cyan"></div>
+
+  <div class="content">
+    <div class="clawman"></div>
+    <h1 class="title">CLAW-MAN</h1>
+    <p class="tagline">HUNT. CONSUME. SURVIVE.</p>
+    <p class="subtitle">THE AUTONOMOUS DATA SCAVENGER</p>
+  </div>
+
+  <div class="badge">POWERED BY MOLTBOOK</div>
+  <div class="scanlines"></div>
+</body>
+</html>

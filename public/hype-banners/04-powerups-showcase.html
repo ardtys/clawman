@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200, height=630">
+  <title>CLAW-MAN - Power-Ups</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 1200px;
+      height: 630px;
+      background: radial-gradient(ellipse at center, #0a0a15 0%, #050508 70%);
+      font-family: 'Press Start 2P', monospace;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Circuit board pattern */
+    .circuit-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.1;
+      background-image:
+        linear-gradient(90deg, #00ffff 1px, transparent 1px),
+        linear-gradient(#00ffff 1px, transparent 1px),
+        radial-gradient(circle, #00ffff 2px, transparent 2px);
+      background-size: 60px 60px, 60px 60px, 30px 30px;
+      background-position: 0 0, 0 0, 15px 15px;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      padding: 50px;
+    }
+
+    .title {
+      font-size: 42px;
+      color: #00ffff;
+      text-shadow:
+        0 0 30px rgba(0, 255, 255, 0.8),
+        0 0 60px rgba(0, 255, 255, 0.4);
+      letter-spacing: 8px;
+      margin-bottom: 15px;
+      animation: titleGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% { text-shadow: 0 0 30px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.4); }
+      50% { text-shadow: 0 0 50px rgba(0, 255, 255, 1), 0 0 100px rgba(0, 255, 255, 0.6); }
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      letter-spacing: 6px;
+      margin-bottom: 60px;
+    }
+
+    .powerups-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+    }
+
+    .powerup-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      border-radius: 16px;
+      background: rgba(10, 10, 20, 0.8);
+      border: 2px solid;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .powerup-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, var(--glow-color) 0%, transparent 70%);
+      opacity: 0.15;
+    }
+
+    .powerup-card:nth-child(1) { --glow-color: #ffff00; border-color: #ffff0040; animation: cardFloat 3s ease-in-out infinite; }
+    .powerup-card:nth-child(2) { --glow-color: #00ffff; border-color: #00ffff40; animation: cardFloat 3s ease-in-out infinite 0.5s; }
+    .powerup-card:nth-child(3) { --glow-color: #ff00ff; border-color: #ff00ff40; animation: cardFloat 3s ease-in-out infinite 1s; }
+    .powerup-card:nth-child(4) { --glow-color: #88ddff; border-color: #88ddff40; animation: cardFloat 3s ease-in-out infinite 1.5s; }
+
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .powerup-icon-container {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .powerup-icon-container::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 3px solid;
+      border-color: inherit;
+      animation: iconSpin 10s linear infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes iconSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .powerup-icon {
+      font-size: 48px;
+      animation: iconPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes iconPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    /* Speed */
+    .speed-card .powerup-icon-container {
+      background: radial-gradient(circle, #ffff0030, transparent);
+      border-color: #ffff00;
+    }
+    .speed-card .powerup-icon { filter: drop-shadow(0 0 15px #ffff00); }
+
+    /* Shield */
+    .shield-card .powerup-icon-container {
+      background: radial-gradient(circle, #00ffff30, transparent);
+      border-color: #00ffff;
+    }
+    .shield-card .powerup-icon { filter: drop-shadow(0 0 15px #00ffff); }
+
+    /* Magnet */
+    .magnet-card .powerup-icon-container {
+      background: radial-gradient(circle, #ff00ff30, transparent);
+      border-color: #ff00ff;
+    }
+    .magnet-card .powerup-icon { filter: drop-shadow(0 0 15px #ff00ff); }
+
+    /* Freeze */
+    .freeze-card .powerup-icon-container {
+      background: radial-gradient(circle, #88ddff30, transparent);
+      border-color: #88ddff;
+    }
+    .freeze-card .powerup-icon { filter: drop-shadow(0 0 15px #88ddff); }
+
+    .powerup-name {
+      font-size: 14px;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+    }
+
+    .powerup-desc {
+      font-size: 10px;
+      color: #666;
+      text-align: center;
+      line-height: 1.6;
+      letter-spacing: 1px;
+    }
+
+    .powerup-duration {
+      margin-top: 15px;
+      font-size: 10px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Bottom tagline */
+    .bottom-section {
+      margin-top: auto;
+      text-align: center;
+    }
+
+    .bottom-text {
+      font-size: 16px;
+      color: #888;
+      letter-spacing: 4px;
+      margin-bottom: 15px;
+    }
+
+    .cta-text {
+      font-size: 12px;
+      color: #ffff00;
+      letter-spacing: 3px;
+      animation: ctaPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes ctaPulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      animation: particleFloat 8s linear infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(630px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-50px) rotate(720deg); opacity: 0; }
+    }
+
+    .particle:nth-child(1) { left: 10%; background: #ffff00; animation-delay: 0s; animation-duration: 6s; }
+    .particle:nth-child(2) { left: 25%; background: #00ffff; animation-delay: 2s; animation-duration: 8s; }
+    .particle:nth-child(3) { left: 40%; background: #ff00ff; animation-delay: 1s; animation-duration: 7s; }
+    .particle:nth-child(4) { left: 55%; background: #88ddff; animation-delay: 3s; animation-duration: 9s; }
+    .particle:nth-child(5) { left: 70%; background: #ffff00; animation-delay: 4s; animation-duration: 6s; }
+    .particle:nth-child(6) { left: 85%; background: #00ffff; animation-delay: 2.5s; animation-duration: 8s; }
+    .particle:nth-child(7) { left: 15%; background: #ff00ff; animation-delay: 5s; animation-duration: 7s; }
+    .particle:nth-child(8) { left: 60%; background: #88ddff; animation-delay: 1.5s; animation-duration: 9s; }
+  </style>
+</head>
+<body>
+  <div class="circuit-bg"></div>
+
+  <!-- Floating Particles -->
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+
+  <div class="content">
+    <h1 class="title">POWER UP</h1>
+    <p class="subtitle">TACTICAL ADVANTAGES IN THE MAZE</p>
+
+    <div class="powerups-grid">
+      <!-- SPEED -->
+      <div class="powerup-card speed-card">
+        <div class="powerup-icon-container">
+          <span class="powerup-icon">⚡</span>
+        </div>
+        <div class="powerup-name" style="color: #ffff00;">SPEED BOOST</div>
+        <div class="powerup-desc">Move 50% faster<br>Outrun any ghost</div>
+        <div class="powerup-duration" style="color: #ffff00;">5 SECONDS</div>
+      </div>
+
+      <!-- SHIELD -->
+      <div class="powerup-card shield-card">
+        <div class="powerup-icon-container">
+          <span class="powerup-icon">🛡️</span>
+        </div>
+        <div class="powerup-name" style="color: #00ffff;">SHIELD</div>
+        <div class="powerup-desc">Immune to damage<br>Pass through ghosts</div>
+        <div class="powerup-duration" style="color: #00ffff;">8 SECONDS</div>
+      </div>
+
+      <!-- MAGNET -->
+      <div class="powerup-card magnet-card">
+        <div class="powerup-icon-container">
+          <span class="powerup-icon">🧲</span>
+        </div>
+        <div class="powerup-name" style="color: #ff00ff;">CRAB MAGNET</div>
+        <div class="powerup-desc">Attract nearby crabs<br>Harvest faster</div>
+        <div class="powerup-duration" style="color: #ff00ff;">6 SECONDS</div>
+      </div>
+
+      <!-- FREEZE -->
+      <div class="powerup-card freeze-card">
+        <div class="powerup-icon-container">
+          <span class="powerup-icon">❄️</span>
+        </div>
+        <div class="powerup-name" style="color: #88ddff;">FREEZE</div>
+        <div class="powerup-desc">Stop all ghosts<br>Hunt freely</div>
+        <div class="powerup-duration" style="color: #88ddff;">4 SECONDS</div>
+      </div>
+    </div>
+
+    <div class="bottom-section">
+      <p class="bottom-text">COLLECT. ACTIVATE. DOMINATE.</p>
+      <p class="cta-text">PLAY CLAW-MAN NOW</p>
+    </div>
+  </div>
+
+  <div class="scanlines"></div>
+</body>
+</html>

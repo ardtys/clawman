@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=800, height=800">
+  <title>CLAW-MAN Meme - Drake Format</title>
+  <link href="https://fonts.googleapis.com/css2?family=Impact&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 800px;
+      height: 800px;
+      background: #050508;
+      font-family: 'Impact', sans-serif;
+      overflow: hidden;
+    }
+
+    .meme-container {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .panel {
+      border: 3px solid #00ffff30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .panel-left {
+      background: linear-gradient(135deg, #0a0a15, #050508);
+    }
+
+    .panel-right {
+      background: #0a0a12;
+      padding: 30px;
+    }
+
+    /* Ghost (Dislike) */
+    .ghost-reject {
+      width: 140px;
+      height: 170px;
+      background: #ff0044;
+      border-radius: 70px 70px 0 0;
+      position: relative;
+      box-shadow: 0 0 40px rgba(255, 0, 68, 0.4);
+      transform: rotate(-10deg);
+    }
+
+    .ghost-reject::before {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 0;
+      width: 100%;
+      height: 35px;
+      background: #ff0044;
+      clip-path: polygon(0 0, 16% 100%, 33% 0, 50% 100%, 66% 0, 83% 100%, 100% 0);
+    }
+
+    .ghost-reject::after {
+      content: '😤';
+      position: absolute;
+      top: 35px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 50px;
+    }
+
+    .reject-hand {
+      position: absolute;
+      bottom: 30px;
+      right: -30px;
+      font-size: 60px;
+      transform: rotate(-20deg);
+    }
+
+    /* CLAW-MAN (Like) */
+    .clawman-approve {
+      width: 150px;
+      height: 150px;
+      background: #ffff00;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 50px rgba(255, 255, 0, 0.6);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .clawman-approve::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 50%;
+      height: 40%;
+      background: #0a0a12;
+      transform: translateY(-50%);
+      clip-path: polygon(0 20%, 100% 50%, 0 80%);
+    }
+
+    .clawman-approve::after {
+      content: '😎';
+      position: absolute;
+      top: 25%;
+      left: 25%;
+      font-size: 40px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 50px rgba(255, 255, 0, 0.6); }
+      50% { box-shadow: 0 0 70px rgba(255, 255, 0, 0.8); }
+    }
+
+    .approve-hand {
+      position: absolute;
+      bottom: 20px;
+      right: -40px;
+      font-size: 70px;
+    }
+
+    /* Text panels */
+    .meme-text {
+      font-size: 36px;
+      color: white;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.4;
+      text-shadow:
+        3px 3px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000;
+    }
+
+    .highlight {
+      color: #ffff00;
+      text-shadow:
+        3px 3px 0 #000,
+        -2px -2px 0 #000,
+        0 0 20px rgba(255, 255, 0, 0.5);
+    }
+
+    .highlight-cyan {
+      color: #00ffff;
+      text-shadow:
+        3px 3px 0 #000,
+        -2px -2px 0 #000,
+        0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    /* Watermark */
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: #00ffff40;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="meme-container">
+    <!-- Top Left - Ghost rejecting -->
+    <div class="panel panel-left">
+      <div class="ghost-reject">
+        <span class="reject-hand">🙅</span>
+      </div>
+    </div>
+
+    <!-- Top Right - Bad option -->
+    <div class="panel panel-right">
+      <p class="meme-text">
+        Playing games that<br>
+        <span class="highlight-cyan">DON'T</span> have<br>
+        crab harvesting
+      </p>
+    </div>
+
+    <!-- Bottom Left - CLAW-MAN approving -->
+    <div class="panel panel-left">
+      <div class="clawman-approve">
+        <span class="approve-hand">👉</span>
+      </div>
+    </div>
+
+    <!-- Bottom Right - Good option -->
+    <div class="panel panel-right">
+      <p class="meme-text">
+        Playing<br>
+        <span class="highlight">CLAW-MAN</span><br>
+        and eating crabs<br>
+        in the maze 🦀
+      </p>
+    </div>
+  </div>
+
+  <div class="watermark">@CLAWMAN</div>
+  <div class="scanlines"></div>
+</body>
+</html>

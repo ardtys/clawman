@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=800, height=800">
+  <title>CLAW-MAN Meme - One More Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Impact&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 800px;
+      height: 800px;
+      background: #050508;
+      font-family: 'Impact', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top panel - The promise */
+    .top-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0a1520, #050810);
+      position: relative;
+      border-bottom: 4px solid #00ffff20;
+    }
+
+    /* Clock showing late time */
+    .clock-container {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .clock {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #1a1a2a, #0a0a15);
+      border: 6px solid #333;
+      position: relative;
+      box-shadow:
+        0 0 30px rgba(0, 0, 0, 0.5),
+        inset 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .clock::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+    }
+
+    .clock-hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      background: white;
+      border-radius: 2px;
+    }
+
+    .hour-hand {
+      width: 6px;
+      height: 40px;
+      transform: translateX(-50%) rotate(90deg);
+    }
+
+    .minute-hand {
+      width: 4px;
+      height: 55px;
+      transform: translateX(-50%) rotate(180deg);
+    }
+
+    .time-text {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 36px;
+      color: #ff0044;
+      text-shadow: 0 0 20px rgba(255, 0, 68, 0.5);
+      animation: timeBlink 1s ease-in-out infinite;
+    }
+
+    @keyframes timeBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .promise-text {
+      position: absolute;
+      bottom: 30px;
+      font-size: 28px;
+      color: white;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .promise-text span {
+      color: #00ffff;
+    }
+
+    /* Bottom panel - The reality */
+    .bottom-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #15100a, #0a0805);
+      position: relative;
+    }
+
+    /* Gaming setup */
+    .gaming-setup {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    /* Monitor with game */
+    .monitor {
+      width: 280px;
+      height: 200px;
+      background: #111;
+      border-radius: 10px;
+      border: 8px solid #222;
+      position: relative;
+      box-shadow: 0 0 50px rgba(255, 255, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .monitor::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 30px;
+      background: #222;
+      border-radius: 0 0 10px 10px;
+    }
+
+    /* Mini game screen */
+    .game-screen {
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(90deg, #00ffff08 1px, transparent 1px),
+        linear-gradient(#00ffff08 1px, transparent 1px),
+        #0a0a12;
+      background-size: 20px 20px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mini-clawman {
+      width: 30px;
+      height: 30px;
+      background: #ffff00;
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+      animation: miniMove 2s ease-in-out infinite;
+    }
+
+    @keyframes miniMove {
+      0%, 100% { transform: translateX(-30px); }
+      50% { transform: translateX(30px); }
+    }
+
+    .mini-crab {
+      position: absolute;
+      font-size: 16px;
+    }
+
+    .mini-crab:nth-child(2) { top: 20%; left: 20%; }
+    .mini-crab:nth-child(3) { top: 60%; right: 25%; }
+    .mini-crab:nth-child(4) { bottom: 20%; left: 40%; }
+
+    .score-display {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: #ffff00;
+    }
+
+    /* Player character (tired) */
+    .player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .player-emoji {
+      font-size: 100px;
+      animation: playerTired 3s ease-in-out infinite;
+    }
+
+    @keyframes playerTired {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
+    }
+
+    .coffee-cups {
+      display: flex;
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    .coffee-cup {
+      font-size: 24px;
+    }
+
+    /* Speech bubble */
+    .speech {
+      position: absolute;
+      top: 30px;
+      right: 100px;
+      background: white;
+      padding: 15px 25px;
+      border-radius: 20px;
+      font-size: 22px;
+      color: #222;
+      font-family: 'Impact', sans-serif;
+    }
+
+    .speech::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 30px;
+      border: 12px solid transparent;
+      border-top-color: white;
+    }
+
+    .speech .highlight {
+      color: #ff6600;
+    }
+
+    /* New clock showing even later */
+    .late-clock {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .late-time {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 24px;
+      color: #ff0044;
+      animation: lateTimePulse 0.5s ease-in-out infinite;
+    }
+
+    @keyframes lateTimePulse {
+      0%, 100% { text-shadow: 0 0 10px rgba(255, 0, 68, 0.5); }
+      50% { text-shadow: 0 0 20px rgba(255, 0, 68, 0.8); }
+    }
+
+    .sun-icon {
+      font-size: 30px;
+      animation: sunRise 2s ease-in-out infinite;
+    }
+
+    @keyframes sunRise {
+      0%, 100% { transform: translateY(5px); opacity: 0.7; }
+      50% { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Divider text */
+    .divider {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .divider-text {
+      background: #ffff00;
+      color: #000;
+      padding: 10px 30px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      letter-spacing: 2px;
+      box-shadow: 0 0 30px rgba(255, 255, 0, 0.5);
+    }
+
+    /* Watermark */
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: #00ffff40;
+      z-index: 50;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.08) 0px,
+        rgba(0, 0, 0, 0.08) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Panel - The Promise -->
+    <div class="top-panel">
+      <div class="clock-container">
+        <div class="clock">
+          <div class="clock-hand hour-hand"></div>
+          <div class="clock-hand minute-hand"></div>
+        </div>
+        <div class="time-text">11:00 PM</div>
+      </div>
+      <p class="promise-text">"Just <span>ONE MORE GAME</span> then I'll sleep"</p>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span class="divider-text">5 HOURS LATER...</span>
+    </div>
+
+    <!-- Bottom Panel - The Reality -->
+    <div class="bottom-panel">
+      <div class="late-clock">
+        <span class="sun-icon">🌅</span>
+        <span class="late-time">4:47 AM</span>
+      </div>
+
+      <div class="gaming-setup">
+        <div class="player">
+          <span class="player-emoji">🧟</span>
+          <div class="coffee-cups">
+            <span class="coffee-cup">☕</span>
+            <span class="coffee-cup">☕</span>
+            <span class="coffee-cup">☕</span>
+          </div>
+        </div>
+
+        <div class="monitor">
+          <div class="game-screen">
+            <span class="mini-crab">🦀</span>
+            <span class="mini-crab">🦀</span>
+            <span class="mini-crab">🦀</span>
+            <div class="mini-clawman"></div>
+            <span class="score-display">847,293</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        "Ok <span class="highlight">ONE MORE</span>... 🦀"
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark">@CLAWMAN</div>
+  <div class="scanlines"></div>
+</body>
+</html>

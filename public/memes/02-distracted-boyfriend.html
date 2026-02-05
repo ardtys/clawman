@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=900, height=600">
+  <title>CLAW-MAN Meme - Distracted Boyfriend</title>
+  <link href="https://fonts.googleapis.com/css2?family=Impact&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 900px;
+      height: 600px;
+      background: linear-gradient(135deg, #0a0a15 0%, #050508 50%, #0a0812 100%);
+      font-family: 'Impact', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scene {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 60px 40px;
+      position: relative;
+    }
+
+    /* Characters */
+    .character {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* The attractive one - Golden Crab */
+    .golden-crab-char {
+      font-size: 120px;
+      animation: crabGlow 1.5s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+    }
+
+    @keyframes crabGlow {
+      0%, 100% { transform: scale(1) rotate(-5deg); }
+      50% { transform: scale(1.1) rotate(5deg); }
+    }
+
+    .label {
+      margin-top: 20px;
+      padding: 15px 25px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid;
+      font-size: 20px;
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .label-gold {
+      color: #ffd700;
+      border-color: #ffd70060;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    /* The boyfriend - CLAW-MAN looking back */
+    .clawman-char {
+      width: 130px;
+      height: 130px;
+      background: #ffff00;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 40px rgba(255, 255, 0, 0.6);
+      transform: rotate(160deg);
+    }
+
+    .clawman-char::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -5px;
+      width: 50%;
+      height: 40%;
+      background: #0a0a15;
+      transform: translateY(-50%);
+      clip-path: polygon(0 20%, 100% 50%, 0 80%);
+      animation: chomp 0.4s ease-in-out infinite;
+    }
+
+    @keyframes chomp {
+      0%, 100% { clip-path: polygon(0 20%, 100% 50%, 0 80%); }
+      50% { clip-path: polygon(0 40%, 100% 50%, 0 60%); }
+    }
+
+    .clawman-char::after {
+      content: '👀';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-160deg);
+      font-size: 35px;
+    }
+
+    .heart-eyes {
+      position: absolute;
+      top: -30px;
+      right: -20px;
+      font-size: 40px;
+      animation: heartBeat 0.8s ease-in-out infinite;
+    }
+
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    .label-yellow {
+      color: #ffff00;
+      border-color: #ffff0060;
+      text-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+    }
+
+    /* The girlfriend - Regular crab looking angry */
+    .regular-crab-char {
+      font-size: 100px;
+      opacity: 0.7;
+      position: relative;
+    }
+
+    .angry-face {
+      position: absolute;
+      top: -20px;
+      right: -10px;
+      font-size: 50px;
+    }
+
+    .label-red {
+      color: #ff6666;
+      border-color: #ff666660;
+    }
+
+    /* Arrow showing attention */
+    .attention-arrow {
+      position: absolute;
+      top: 50%;
+      left: 42%;
+      transform: translateY(-50%);
+      font-size: 60px;
+      color: #ff69b4;
+      animation: arrowPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+      50% { opacity: 1; transform: translateY(-50%) translateX(-10px); }
+    }
+
+    /* Title */
+    .title {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: #00ffff;
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    /* Watermark */
+    .watermark {
+      position: absolute;
+      bottom: 15px;
+      right: 20px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: #00ffff40;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.08) 0px,
+        rgba(0, 0, 0, 0.08) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Connection lines */
+    .connection-line {
+      position: absolute;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #ff69b4, transparent);
+      top: 50%;
+      left: 30%;
+      width: 15%;
+      animation: linePulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes linePulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <div class="title">EVERY CLAW-MAN PLAYER KNOWS...</div>
+
+  <div class="scene">
+    <!-- Regular Crab (Girlfriend) -->
+    <div class="character">
+      <div class="regular-crab-char">
+        🦀
+        <span class="angry-face">😠</span>
+      </div>
+      <div class="label label-red">
+        Regular crabs<br>worth 10 points
+      </div>
+    </div>
+
+    <!-- CLAW-MAN (Boyfriend) -->
+    <div class="character">
+      <div class="clawman-char">
+        <span class="heart-eyes">😍</span>
+      </div>
+      <div class="label label-yellow">
+        Me playing<br>CLAW-MAN
+      </div>
+    </div>
+
+    <!-- Golden Crab (Attractive one) -->
+    <div class="character">
+      <div class="golden-crab-char">🦀</div>
+      <div class="label label-gold">
+        GOLDEN CRAB<br>+500 points & power-up
+      </div>
+    </div>
+
+    <div class="attention-arrow">💕</div>
+    <div class="connection-line"></div>
+  </div>
+
+  <div class="watermark">@CLAWMAN</div>
+  <div class="scanlines"></div>
+</body>
+</html>

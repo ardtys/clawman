@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200, height=630">
+  <title>CLAW-MAN - Gameplay Action</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 1200px;
+      height: 630px;
+      background: #050508;
+      font-family: 'Press Start 2P', monospace;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .crt-frame {
+      position: absolute;
+      inset: 20px;
+      border: 4px solid #222;
+      border-radius: 20px;
+      box-shadow:
+        inset 0 0 100px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(0, 255, 255, 0.1);
+    }
+
+    /* Mini Maze */
+    .maze-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .maze {
+      display: grid;
+      grid-template-columns: repeat(15, 32px);
+      grid-template-rows: repeat(11, 32px);
+      gap: 0;
+      background: #0a0a0f;
+      padding: 4px;
+      border: 2px solid #00ffff30;
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
+    }
+
+    .cell {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wall {
+      background: linear-gradient(135deg, #001a1a, #003333);
+      border: 1px solid #00ffff40;
+      box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+
+    .path {
+      background: #0a0a0f;
+    }
+
+    .crab {
+      font-size: 18px;
+      animation: crabPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes crabPulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .golden-crab {
+      font-size: 20px;
+      animation: goldenPulse 0.8s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+    }
+
+    @keyframes goldenPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* CLAW-MAN in maze */
+    .clawman-mini {
+      width: 26px;
+      height: 26px;
+      background: #ffff00;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+      animation: clawMove 4s linear infinite;
+    }
+
+    .clawman-mini::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -2px;
+      width: 50%;
+      height: 40%;
+      background: #0a0a0f;
+      transform: translateY(-50%);
+      animation: miniChomp 0.3s ease-in-out infinite;
+    }
+
+    @keyframes miniChomp {
+      0%, 100% { clip-path: polygon(0 15%, 100% 50%, 0 85%); }
+      50% { clip-path: polygon(0 40%, 100% 50%, 0 60%); }
+    }
+
+    /* Mini Ghosts */
+    .mini-ghost {
+      width: 24px;
+      height: 28px;
+      border-radius: 12px 12px 0 0;
+      position: relative;
+    }
+
+    .mini-ghost::before {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: inherit;
+      clip-path: polygon(0 0, 25% 100%, 50% 0, 75% 100%, 100% 0);
+    }
+
+    .mini-ghost::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 4px;
+      width: 6px;
+      height: 7px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 10px 0 0 white;
+    }
+
+    .mg-red { background: #ff0044; box-shadow: 0 0 12px rgba(255, 0, 68, 0.6); }
+    .mg-pink { background: #ff69b4; box-shadow: 0 0 12px rgba(255, 105, 180, 0.6); }
+    .mg-cyan { background: #00bfff; box-shadow: 0 0 12px rgba(0, 191, 255, 0.6); }
+    .mg-orange { background: #ff8800; box-shadow: 0 0 12px rgba(255, 136, 0, 0.6); }
+
+    /* HUD Elements */
+    .hud-top {
+      position: absolute;
+      top: 40px;
+      left: 50px;
+      right: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .score-display {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .score-label {
+      font-size: 12px;
+      color: #666;
+      letter-spacing: 2px;
+    }
+
+    .score-value {
+      font-size: 28px;
+      color: #ffff00;
+      text-shadow: 0 0 20px rgba(255, 255, 0, 0.6);
+      animation: scoreFlash 0.5s ease-in-out infinite;
+    }
+
+    @keyframes scoreFlash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.9; }
+    }
+
+    .level-display {
+      text-align: right;
+    }
+
+    .level-label {
+      font-size: 12px;
+      color: #666;
+      letter-spacing: 2px;
+    }
+
+    .level-value {
+      font-size: 28px;
+      color: #00ffff;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    }
+
+    /* Lives */
+    .lives-display {
+      position: absolute;
+      bottom: 50px;
+      left: 50px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .lives-label {
+      font-size: 12px;
+      color: #666;
+      letter-spacing: 2px;
+    }
+
+    .lives-icons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .life-icon {
+      width: 24px;
+      height: 24px;
+      background: #ffff00;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+    }
+
+    /* Combo Display */
+    .combo-display {
+      position: absolute;
+      bottom: 50px;
+      right: 50px;
+      text-align: right;
+    }
+
+    .combo-label {
+      font-size: 10px;
+      color: #666;
+      letter-spacing: 2px;
+    }
+
+    .combo-value {
+      font-size: 36px;
+      color: #ff6600;
+      text-shadow: 0 0 30px rgba(255, 102, 0, 0.8);
+      animation: comboPulse 0.3s ease-in-out infinite;
+    }
+
+    @keyframes comboPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Action Text */
+    .action-text {
+      position: absolute;
+      top: 50%;
+      right: 80px;
+      transform: translateY(-50%);
+      font-size: 24px;
+      color: #39ff14;
+      text-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+      animation: actionPop 1s ease-in-out infinite;
+      writing-mode: vertical-rl;
+      letter-spacing: 4px;
+    }
+
+    @keyframes actionPop {
+      0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+      50% { opacity: 1; transform: translateY(-50%) scale(1.05); }
+    }
+
+    /* Power-up indicator */
+    .powerup-active {
+      position: absolute;
+      top: 50%;
+      left: 60px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .powerup-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid #00ffff40;
+      border-radius: 4px;
+    }
+
+    .powerup-icon {
+      font-size: 18px;
+    }
+
+    .powerup-bar {
+      width: 60px;
+      height: 8px;
+      background: #222;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .powerup-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00ffff, #00ff88);
+      animation: barDrain 5s linear infinite;
+    }
+
+    @keyframes barDrain {
+      0% { width: 100%; }
+      100% { width: 0%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="crt-frame"></div>
+
+  <!-- HUD Top -->
+  <div class="hud-top">
+    <div class="score-display">
+      <span class="score-label">SCORE</span>
+      <span class="score-value">847,293</span>
+    </div>
+    <div class="level-display">
+      <span class="level-label">LEVEL</span>
+      <span class="level-value">42</span>
+    </div>
+  </div>
+
+  <!-- Power-up Active -->
+  <div class="powerup-active">
+    <div class="powerup-item">
+      <span class="powerup-icon">⚡</span>
+      <div class="powerup-bar">
+        <div class="powerup-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Text -->
+  <div class="action-text">HUNTING!</div>
+
+  <!-- Maze -->
+  <div class="maze-container">
+    <div class="maze">
+      <!-- Row 1 -->
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <!-- Row 2 -->
+      <div class="cell wall"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"><div class="clawman-mini"></div></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell wall"></div>
+      <!-- Row 3 -->
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <!-- Row 4 -->
+      <div class="cell wall"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"><div class="mini-ghost mg-red"></div></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"><div class="mini-ghost mg-pink"></div></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell wall"></div>
+      <!-- Row 5 -->
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"><span class="golden-crab">🦀</span></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <!-- Row 6 - Warp tunnel row -->
+      <div class="cell path" style="background: #1a0033;"></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path" style="background: #1a0033;"></div>
+      <!-- Row 7 -->
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <!-- Row 8 -->
+      <div class="cell wall"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"><div class="mini-ghost mg-cyan"></div></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell wall"></div>
+      <!-- Row 9 -->
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell path"></div>
+      <div class="cell wall"></div>
+      <!-- Row 10 -->
+      <div class="cell wall"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"><div class="mini-ghost mg-orange"></div></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"></div>
+      <div class="cell path"></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell path"><span class="crab">🦀</span></div>
+      <div class="cell wall"></div>
+      <!-- Row 11 -->
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+      <div class="cell wall"></div>
+    </div>
+  </div>
+
+  <!-- Lives -->
+  <div class="lives-display">
+    <span class="lives-label">LIVES</span>
+    <div class="lives-icons">
+      <div class="life-icon"></div>
+      <div class="life-icon"></div>
+      <div class="life-icon"></div>
+    </div>
+  </div>
+
+  <!-- Combo -->
+  <div class="combo-display">
+    <span class="combo-label">COMBO</span>
+    <span class="combo-value">x5</span>
+  </div>
+
+  <div class="scanlines"></div>
+</body>
+</html>

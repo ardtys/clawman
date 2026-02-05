@@ -30,6 +30,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import ContractAddress from "@/components/ContractAddress";
 
 // ============================================================
 // MINI MAZE RENDERER (Canvas-based hero visualization)
@@ -882,12 +883,22 @@ export default function LandingPage() {
               </motion.button>
             </motion.div>
 
+            {/* Contract Address */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.5 }}
+              className="flex justify-center lg:justify-start mt-6"
+            >
+              <ContractAddress variant="default" showLabel={true} />
+            </motion.div>
+
             {/* Quick Stats */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.6 }}
-              className="flex gap-6 mt-8 justify-center lg:justify-start"
+              className="flex gap-6 mt-6 justify-center lg:justify-start"
             >
               {[
                 { label: "GAME MODES", value: "4" },
@@ -1235,6 +1246,10 @@ export default function LandingPage() {
       <footer className="w-full border-t border-[#00ffff]/10 relative z-10">
         <PageSection className="py-6">
           <div className="text-center">
+            {/* Contract Address in Footer */}
+            <div className="flex justify-center mb-4">
+              <ContractAddress variant="full" showLabel={true} />
+            </div>
             <div className="flex items-center justify-center gap-4 flex-wrap mb-3">
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#00ffff] animate-pulse" />

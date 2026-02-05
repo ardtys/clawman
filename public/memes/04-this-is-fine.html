@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=900, height=600">
+  <title>CLAW-MAN Meme - This Is Fine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Impact&family=Press+Start+2P&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 900px;
+      height: 600px;
+      background: #0a0a12;
+      font-family: 'Impact', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scene {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Maze background */
+    .maze-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, #00ffff10 1px, transparent 1px),
+        linear-gradient(#00ffff10 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Fire/Chaos elements - Ghosts surrounding */
+    .chaos-zone {
+      position: absolute;
+      inset: 0;
+    }
+
+    .ghost {
+      position: absolute;
+      width: 70px;
+      height: 85px;
+      border-radius: 35px 35px 0 0;
+      animation: ghostHover 2s ease-in-out infinite;
+    }
+
+    .ghost::before {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: inherit;
+      clip-path: polygon(0 0, 20% 100%, 40% 0, 60% 100%, 80% 0, 100% 100%, 100% 0);
+    }
+
+    .ghost::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 12px;
+      width: 16px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 26px 0 0 white;
+    }
+
+    @keyframes ghostHover {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Position ghosts around */
+    .ghost-1 { top: 15%; left: 10%; background: #ff0044; animation-delay: 0s; box-shadow: 0 0 30px rgba(255, 0, 68, 0.5); }
+    .ghost-2 { top: 10%; right: 15%; background: #ff69b4; animation-delay: 0.5s; box-shadow: 0 0 30px rgba(255, 105, 180, 0.5); }
+    .ghost-3 { bottom: 20%; left: 8%; background: #00bfff; animation-delay: 1s; box-shadow: 0 0 30px rgba(0, 191, 255, 0.5); }
+    .ghost-4 { bottom: 15%; right: 12%; background: #ff8800; animation-delay: 1.5s; box-shadow: 0 0 30px rgba(255, 136, 0, 0.5); }
+    .ghost-5 { top: 40%; left: 5%; background: #9400d3; animation-delay: 0.3s; box-shadow: 0 0 30px rgba(148, 0, 211, 0.5); }
+    .ghost-6 { top: 35%; right: 8%; background: #00ff88; animation-delay: 0.8s; box-shadow: 0 0 30px rgba(0, 255, 136, 0.5); }
+
+    /* Danger indicators */
+    .danger-flash {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(255, 0, 0, 0.15) 100%);
+      animation: dangerPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes dangerPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+
+    /* Center content - CLAW-MAN sitting */
+    .center-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Table */
+    .table {
+      width: 200px;
+      height: 80px;
+      background: linear-gradient(180deg, #3a2a1a, #2a1a0a);
+      border-radius: 10px 10px 0 0;
+      position: relative;
+      margin-top: -40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .table::before {
+      content: '☕';
+      position: absolute;
+      top: 10px;
+      right: 30px;
+      font-size: 30px;
+    }
+
+    /* CLAW-MAN character */
+    .clawman {
+      width: 140px;
+      height: 140px;
+      background: #ffff00;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 50px rgba(255, 255, 0, 0.6);
+      z-index: 5;
+    }
+
+    .clawman::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -8px;
+      width: 50%;
+      height: 40%;
+      background: #0a0a12;
+      transform: translateY(-50%);
+      clip-path: polygon(0 25%, 100% 50%, 0 75%);
+    }
+
+    /* Calm face */
+    .clawman-face {
+      position: absolute;
+      top: 30%;
+      left: 25%;
+      font-size: 30px;
+    }
+
+    /* Speech bubble */
+    .speech-bubble {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 20px 30px;
+      border-radius: 20px;
+      font-family: 'Comic Neue', cursive;
+      font-size: 28px;
+      color: #222;
+      white-space: nowrap;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 15px solid transparent;
+      border-top-color: white;
+    }
+
+    /* Status bar at bottom */
+    .status-bar {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid;
+      border-radius: 8px;
+    }
+
+    .status-lives {
+      border-color: #ff004440;
+    }
+
+    .status-lives .label {
+      color: #ff0044;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+    }
+
+    .status-lives .value {
+      color: #ff0044;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+    }
+
+    .status-ghosts {
+      border-color: #ff69b440;
+    }
+
+    .status-ghosts .label {
+      color: #ff69b4;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+    }
+
+    .status-ghosts .value {
+      color: #ff69b4;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      animation: blink 0.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Title */
+    .title {
+      position: absolute;
+      top: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      color: #ffff00;
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px rgba(255, 255, 0, 0.5);
+    }
+
+    /* Watermark */
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: #00ffff40;
+      z-index: 50;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="maze-bg"></div>
+  <div class="danger-flash"></div>
+
+  <div class="scene">
+    <div class="chaos-zone">
+      <div class="ghost ghost-1"></div>
+      <div class="ghost ghost-2"></div>
+      <div class="ghost ghost-3"></div>
+      <div class="ghost ghost-4"></div>
+      <div class="ghost ghost-5"></div>
+      <div class="ghost ghost-6"></div>
+    </div>
+
+    <div class="center-content">
+      <div class="speech-bubble">This is fine. 🦀</div>
+      <div class="clawman">
+        <span class="clawman-face">😌</span>
+      </div>
+      <div class="table"></div>
+    </div>
+  </div>
+
+  <div class="title">LEVEL 42 BE LIKE:</div>
+
+  <div class="status-bar">
+    <div class="status-item status-lives">
+      <span class="label">LIVES:</span>
+      <span class="value">1</span>
+    </div>
+    <div class="status-item status-ghosts">
+      <span class="label">GHOSTS:</span>
+      <span class="value">6 (!)</span>
+    </div>
+  </div>
+
+  <div class="watermark">@CLAWMAN</div>
+  <div class="scanlines"></div>
+</body>
+</html>
